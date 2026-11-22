@@ -1,0 +1,6 @@
+purchase_id,vendor,bill_no,amount,gst,total
+PUR-2024-01,Steel Castings India,BILL-9011,450000.0,81000.0,531000.0
+PUR-2024-02,Kirloskar Power Tools,BILL-4412,220000.0,39600.0,259600.0
+PUR-2024-03,Shivaji Precision Lathe,MISSING_DOC,45000.0,0.0,45000.0
+PUR-2024-04,Haas Automation Inc,BILL-CNC-88,80000.0,14400.0,94400.0
+PUR-2024-05,SKF Bearings Ltd,BILL-5519,310000.0,55800.0,365800.0

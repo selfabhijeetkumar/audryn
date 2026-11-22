@@ -1,0 +1,99 @@
+{
+  "disclaimer": "FICTIONAL DEMONSTRATION DATA: All corporate identity, Corporate Identification Number (CIN), financial figures, vouchers, and tax calculations are completely synthetic and generated exclusively for AUDRYN testing and demonstration. The CIN is fictional and is NOT an MCA-verified legal entity. No real-world taxpayer data is contained herein.",
+  "entity": "Apex Industrial Dynamics Pvt Ltd",
+  "cin": "U29100MH2020PTC998877",
+  "currency": "INR",
+  "currency_symbol": "\u20b9",
+  "anomalies": [
+    {
+      "anomaly_id": "ANOM-01",
+      "title": "Duplicate Invoice Posted",
+      "category": "REVENUE_AND_SALES",
+      "document_reference": "sales_register_fy2024_25.csv & general_ledger_fy2024_25.csv",
+      "planted_detail": "Invoice INV-2024-001 was posted twice on 2024-04-15 and 2024-04-16 for \u20b9 18,500.00 (Total \u20b9 21,830.00 with GST).",
+      "impact_amount": 18500.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-02",
+      "title": "Missing Invoice Supporting Ledger",
+      "category": "REVENUE_AND_SALES",
+      "document_reference": "general_ledger_fy2024_25.csv",
+      "planted_detail": "Voucher VOUCH-REV-1049 for \u20b9 42,000.00 has no matching sales invoice in the Sales Register.",
+      "impact_amount": 42000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-03",
+      "title": "Trial Balance to General Ledger Revenue Mismatch",
+      "category": "GENERAL_LEDGER",
+      "document_reference": "trial_balance_fy2024_25.csv vs general_ledger_fy2024_25.csv",
+      "planted_detail": "Trial balance account 4001 reports \u20b9 41,20,000.00, while general ledger total is \u20b9 41,48,000.00 (\u20b9 28,000.00 variance).",
+      "impact_amount": 28000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-04",
+      "title": "Incorrect Depreciation Calculation",
+      "category": "FIXED_ASSETS_AND_DEPRECIATION",
+      "document_reference": "fixed_asset_register_fy2024_25.csv",
+      "planted_detail": "Asset AST-102 claimed 25% WDV depreciation (\u20b9 1,25,000.00) instead of statutory 15% Section 32 rate (\u20b9 75,000.00), overstating expense by \u20b9 50,000.00.",
+      "impact_amount": 50000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-05",
+      "title": "Cross-Year Inventory Discrepancy",
+      "category": "STATUTORY_RECONCILIATION",
+      "document_reference": "trial_balance_fy2023_24.csv vs trial_balance_fy2024_25.csv",
+      "planted_detail": "Closing inventory in FY 2023-24 was \u20b9 4,50,000.00, but Opening inventory in FY 2024-25 was booked at \u20b9 4,85,000.00 (\u20b9 35,000.00 unexplained leap).",
+      "impact_amount": 35000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-06",
+      "title": "Unusual Journal Entry Timing & Round Sum",
+      "category": "GENERAL_LEDGER",
+      "document_reference": "general_ledger_fy2024_25.csv (VOUCH-REV-1100)",
+      "planted_detail": "Round-sum entry of \u20b9 1,00,000.00 posted on Sunday 2024-09-15 without customer invoice reference.",
+      "impact_amount": 100000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-07",
+      "title": "Duplicate Bank UTR Payment Reference",
+      "category": "CASH_AND_BANK",
+      "document_reference": "bank_transactions_fy2024_25.csv",
+      "planted_detail": "UTR-DUP-8822 for \u20b9 94,400.00 debited twice on 2024-06-25 and 2024-07-02.",
+      "impact_amount": 94400.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-08",
+      "title": "Missing Supporting Vendor Bill",
+      "category": "PURCHASES_AND_PAYABLES",
+      "document_reference": "purchase_register_fy2024_25.csv (PUR-2024-03)",
+      "planted_detail": "Purchase PUR-2024-03 for \u20b9 45,000.00 from Shivaji Precision Lathe has bill_no 'MISSING_DOC'.",
+      "impact_amount": 45000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-09",
+      "title": "Capital Expenditure Misclassified as Revenue",
+      "category": "TAX_COMPLIANCE",
+      "document_reference": "purchase_register_fy2024_25.csv (PUR-2024-04)",
+      "planted_detail": "CNC capital tool costing \u20b9 80,000.00 from Haas Automation expensed under revenue purchases instead of capitalized.",
+      "impact_amount": 80000.0,
+      "currency": "INR"
+    },
+    {
+      "anomaly_id": "ANOM-10",
+      "title": "Materiality Threshold Breach",
+      "category": "TAX_COMPLIANCE",
+      "document_reference": "trial_balance_fy2024_25.csv (5005)",
+      "planted_detail": "Legal expenses leaped from \u20b9 0 to \u20b9 87,000.00 without supporting fee schedule, exceeding the \u20b9 5,000.00 audit materiality threshold.",
+      "impact_amount": 87000.0,
+      "currency": "INR"
+    }
+  ]
+}

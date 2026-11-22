@@ -1,0 +1,227 @@
+{
+  "total": 44,
+  "passed": 44,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "Home Page Title Check",
+      "status": "PASS",
+      "detail": "AUDRYN — Evidence Before Conclusions"
+    },
+    {
+      "name": "Section 11 First-Screen Contract",
+      "status": "PASS",
+      "detail": "Category sentence & promise verified"
+    },
+    {
+      "name": "Platform Page Route",
+      "status": "PASS",
+      "detail": "Evidence-first audit intelligence."
+    },
+    {
+      "name": "Trust Page & Truth Dimensions",
+      "status": "PASS",
+      "detail": "Calculation, Source & Evidence validity segregated"
+    },
+    {
+      "name": "About Page Route",
+      "status": "PASS",
+      "detail": "Ethos and target audience verified"
+    },
+    {
+      "name": "Demo Request Page & Prototype Notice",
+      "status": "PASS",
+      "detail": "Simulation disclosure verified"
+    },
+    {
+      "name": "Privacy Policy Page (DPDP 2026 Date)",
+      "status": "PASS",
+      "detail": "Verified"
+    },
+    {
+      "name": "Cookie Policy Page",
+      "status": "PASS",
+      "detail": "Verified essential storage only"
+    },
+    {
+      "name": "404 Not Found Page",
+      "status": "PASS",
+      "detail": "Responsive 404 verified"
+    },
+    {
+      "name": "Stage Stepper S0 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S0: THE PROBLEM (0%–10% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S1 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S1: EXTRACTION (15%–25% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S2 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S2: VERIFICATION (30%–40% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S3 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S3: RELATIONSHIPS (45%–55% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S4 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S4: CHALLENGE (60%–70% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S5 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S5: HUMAN JUDGMENT (75%–85% HOLD)"
+    },
+    {
+      "name": "Stage Stepper S6 Hold Range Sync",
+      "status": "PASS",
+      "detail": "S6: ACCOUNTABILITY (90%–100% HOLD)"
+    },
+    {
+      "name": "Global PROTOTYPE Badge in Workspace",
+      "status": "PASS",
+      "detail": "Persistent status badge visible"
+    },
+    {
+      "name": "Workspace View: 1. Evidence Ingestion",
+      "status": "PASS",
+      "detail": "Verified: Evidence Ingestion & SHA-256 Hashes"
+    },
+    {
+      "name": "Workspace View: 2. Completeness Gate",
+      "status": "PASS",
+      "detail": "Verified: Completeness Gate & Not-Checked Register"
+    },
+    {
+      "name": "Workspace View: 3. Multi-Agent Run",
+      "status": "PASS",
+      "detail": "Verified: LangGraph Audit Supervisor"
+    },
+    {
+      "name": "Workspace View: 4. Counter-Evidence",
+      "status": "PASS",
+      "detail": "Verified: Counter-Evidence Scrutiny"
+    },
+    {
+      "name": "Workspace View: 5. Human Review Queue",
+      "status": "PASS",
+      "detail": "Verified: Auditor Decision Workspace"
+    },
+    {
+      "name": "Workspace View: 6. Decimal Math",
+      "status": "PASS",
+      "detail": "Verified: Deterministic Financial Calculations"
+    },
+    {
+      "name": "Workspace View: 7. Statutory Tax",
+      "status": "PASS",
+      "detail": "Verified: Section 115BAA Corporate Tax Computation"
+    },
+    {
+      "name": "Workspace View: 8. Audit Report",
+      "status": "PASS",
+      "detail": "Verified: Audit Report Manifest & Generation"
+    },
+    {
+      "name": "Workspace View: 9. Provenance Graph",
+      "status": "PASS",
+      "detail": "Verified: Provenance Trace Explorer"
+    },
+    {
+      "name": "Workspace View: 10. Settings & Roles",
+      "status": "PASS",
+      "detail": "Verified: Authorized Engagement Team (Simulation)"
+    },
+    {
+      "name": "Human Review Decision Simulation",
+      "status": "PASS",
+      "detail": "Brass sign-off simulated with truth disclosure"
+    },
+    {
+      "name": "Breakpoint 1920_UltraWide (1920px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=1920px)"
+    },
+    {
+      "name": "Breakpoint 1440_Desktop (1440px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=1440px)"
+    },
+    {
+      "name": "Breakpoint 1366_Laptop (1366px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=1366px)"
+    },
+    {
+      "name": "Breakpoint 1024_TabletLandscape (1024px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=1024px)"
+    },
+    {
+      "name": "Breakpoint 768_TabletPortrait (768px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=768px)"
+    },
+    {
+      "name": "Breakpoint 390_Mobile (390px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=390px)"
+    },
+    {
+      "name": "Breakpoint 360_MobileSmall (360px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=360px)"
+    },
+    {
+      "name": "Breakpoint 320_ReflowBoundary (320px)",
+      "status": "PASS",
+      "detail": "Zero horizontal overflow (scrollWidth=320px)"
+    },
+    {
+      "name": "axe-core Automated WCAG 2.2 AA Audit",
+      "status": "PASS",
+      "detail": "Zero critical/serious violations (28 passes)"
+    },
+    {
+      "name": "Keyboard Navigation Skip Link",
+      "status": "PASS",
+      "detail": "First tab lands on skip link"
+    },
+    {
+      "name": "Form Validation: Required Fields",
+      "status": "PASS",
+      "detail": "Please complete all required fields (Name, Professional Email, Firm Name)."
+    },
+    {
+      "name": "Form Validation: DPDP Consent Gate",
+      "status": "PASS",
+      "detail": "Consent to process your contact details is required under DPDP guidelines."
+    },
+    {
+      "name": "Demo Form Simulation Outcome",
+      "status": "PASS",
+      "detail": "Redirects to simulation disclosure page"
+    },
+    {
+      "name": "Accessibility: Reduce Visual Effects Toggle",
+      "status": "PASS",
+      "detail": "Successfully added .reduce-effects to <html>"
+    },
+    {
+      "name": "Content Security Policy Integrity",
+      "status": "PASS",
+      "detail": "Self-hosted fonts only; Google CDN removed"
+    },
+    {
+      "name": "XSS Sanitization & DOM Rendering",
+      "status": "PASS",
+      "detail": "Strict HTML escaping verified"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# Render Blueprint Specification for AUDRYN Backend API
+#
+# STORAGE NOTICE:
+# In accordance with AUDRYN V2.1 Deployment Addendum Requirement 5:
+# Render's free tier runs on ephemeral filesystem storage.
+# This deployment is explicitly configured in DEMO_SYNTHETIC mode.
+# Persistent client audit records are not saved to ephemeral disks.
+
+services:
+  - type: web
+    name: audryn-api
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m backend.db.migrate && uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: PYTHONPATH
+        value: .
+      - key: AUDRYN_DB_PATH
+        value: data/db/audryn.db
+      - key: AUDRYN_STORAGE_MODE
+        value: DEMO_SYNTHETIC
+      - key: AUDRYN_EPHEMERAL_NOTICE
+        value: "Render free tier runs on ephemeral storage. Persistent live audit records require authorized persistent storage. Deployment restricted to synthetic demonstration."
+      - key: AUDRYN_SECRET_KEY
+        generateValue: true
+      - key: AUDRYN_CORS_ORIGINS
+        value: "https://*.vercel.app,http://localhost:5173,http://localhost:4173"
+      - key: ENV
+        value: production
+      - key: OLLAMA_BASE_URL
+        value: "http://127.0.0.1:11434"

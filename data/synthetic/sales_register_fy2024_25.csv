@@ -1,0 +1,10 @@
+invoice_number,date,customer,taxable_value,gst_rate,total_value
+INV-2024-001,2024-04-15,Zenith Motors Ltd,18500.0,0.18,21830.0
+INV-2024-001,2024-04-16,Zenith Motors Ltd,18500.0,0.18,21830.0
+INV-2024-002,2024-05-09,Aura Heavy Engineering,125000.0,0.18,147500.0
+INV-2024-003,2024-06-18,Global Aerospace GmbH,350000.0,0.0,350000.0
+INV-2024-004,2024-08-15,Bharat Hydraulics,540000.0,0.18,637200.0
+INV-2024-005,2024-11-01,Titan Forgings Ltd,850000.0,0.18,1003000.0
+INV-2024-006,2024-12-18,Omron Robotics,620000.0,0.18,731600.0
+INV-2024-007,2025-01-22,Zenith Motors Ltd,730000.0,0.18,861400.0
+INV-2024-008,2025-03-27,Dynamic Transmissions,754000.0,0.18,889720.0

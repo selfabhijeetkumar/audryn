@@ -1,0 +1,6 @@
+date,utr_reference,description,debit,credit,balance
+2024-04-18,UTR-2024-991,NEFT from Zenith Motors,0.0,21830.0,271830.0
+2024-05-12,UTR-2024-992,Vendor payout Steel Castings,531000.0,0.0,-259170.0
+2024-06-25,UTR-DUP-8822,Vendor payout Haas Automation,94400.0,0.0,-353570.0
+2024-07-02,UTR-DUP-8822,Duplicate debit Haas Automation,94400.0,0.0,-447970.0
+2024-08-20,UTR-2024-995,Export remittance Global Aero,0.0,350000.0,-97970.0

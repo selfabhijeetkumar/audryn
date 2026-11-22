@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-paper: #F6F3EB;
+  --color-stage: #121110;
+  --color-ink: #1A1714;
+  --color-flint: #5C5752;
+  --color-ash: #9C968F;
+  --color-border: #E8E4DC;
+  --color-brass-dark: #7A5F2B;
+  --color-brass-light: #B08D4F;
+  --color-signal-red: #C0392B;
+  --color-signal-amber: #B77F0A;
+  --color-signal-green: #1A7A40;
+}
+
+/* Global focus styles meeting WCAG 2.4.7 and 2.4.11 */
+*:focus-visible {
+  outline: 2px solid #7A5F2B;
+  outline-offset: 2px;
+}
+
+/* Accessibility: Reduce Visual Effects Override */
+.reduce-effects * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Tabular number alignment for all financial values */
+.font-mono,
+.tabular-nums {
+  font-variant-numeric: tabular-nums lining-nums;
+}

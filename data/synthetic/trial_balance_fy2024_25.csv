@@ -1,0 +1,17 @@
+account_code,account_name,debit,credit
+1001,Cash & Cash Equivalents,310000.0,0.0
+1002,Trade Receivables,790000.0,0.0
+1003,Opening Inventory,485000.0,0.0
+1004,Closing Inventory,520000.0,0.0
+1501,Plant & Machinery (Gross),1500000.0,0.0
+1502,Accumulated Depreciation,0.0,570000.0
+2001,Trade Payables,0.0,490000.0
+2002,Short-Term Bank Borrowings,0.0,250000.0
+3001,Share Capital,0.0,500000.0
+3002,Retained Earnings,0.0,1050000.0
+4001,Revenue from Operations,0.0,4120000.0
+5001,Cost of Raw Materials,2100000.0,0.0
+5002,Employee Benefit Expenses,710000.0,0.0
+5003,Depreciation Expense,210000.0,0.0
+5004,Other Operating Expenses,178000.0,0.0
+5005,Legal & Professional Fees,87000.0,0.0

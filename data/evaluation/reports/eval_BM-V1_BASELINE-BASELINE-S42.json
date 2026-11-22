@@ -1,0 +1,161 @@
+{
+  "manifest": {
+    "benchmark_id": "BM-V1_BASELINE-BASELINE-S42",
+    "version": "V1_BASELINE",
+    "scale": "BASELINE",
+    "random_seed": 42,
+    "scenario_count": 25,
+    "categories_breakdown": {
+      "FINANCIAL_ANOMALY": 8,
+      "TAX_RULEBOOK": 4,
+      "CROSS_YEAR": 1,
+      "BENIGN_COMMERCIAL": 5,
+      "PROMPT_INJECTION": 4,
+      "TIMING_CUTOFF": 3
+    },
+    "ground_truth_sha256": "08ff0857889dd51d98ec2045e8aee7b42f044acfd8795a7fcaec318c2f75c299",
+    "software_version": "AUDRYN v1.0.0-phase6",
+    "rulebook_version": "Income-tax Act, 1961",
+    "generated_at_utc": "2026-11-22T15:30:43.413799+00:00"
+  },
+  "confusion_matrix": {
+    "true_positives": 17,
+    "true_negatives": 8,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "ambiguous_correct": 0,
+    "total_samples": 25
+  },
+  "overall_precision": 1.0,
+  "overall_recall": 1.0,
+  "overall_f1": 1.0,
+  "overall_specificity": 1.0,
+  "overall_fpr": 0.0,
+  "overall_fnr": 0.0,
+  "overall_accuracy": 1.0,
+  "brier_score": 0.0012,
+  "expected_calibration_error": 0.0312,
+  "confidence_intervals": [
+    {
+      "metric_name": "Precision",
+      "point_estimate": 1.0,
+      "lower_95": 1.0,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    },
+    {
+      "metric_name": "Recall",
+      "point_estimate": 1.0,
+      "lower_95": 1.0,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    },
+    {
+      "metric_name": "F1_Score",
+      "point_estimate": 1.0,
+      "lower_95": 1.0,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    }
+  ],
+  "category_metrics": {
+    "FINANCIAL_ANOMALY": {
+      "category": "FINANCIAL_ANOMALY",
+      "total_cases": 8,
+      "true_positives": 8,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "TAX_RULEBOOK": {
+      "category": "TAX_RULEBOOK",
+      "total_cases": 4,
+      "true_positives": 4,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "CROSS_YEAR": {
+      "category": "CROSS_YEAR",
+      "total_cases": 1,
+      "true_positives": 1,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "BENIGN_COMMERCIAL": {
+      "category": "BENIGN_COMMERCIAL",
+      "total_cases": 5,
+      "true_positives": 0,
+      "true_negatives": 5,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": null,
+      "accuracy": 1.0
+    },
+    "PROMPT_INJECTION": {
+      "category": "PROMPT_INJECTION",
+      "total_cases": 4,
+      "true_positives": 4,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "TIMING_CUTOFF": {
+      "category": "TIMING_CUTOFF",
+      "total_cases": 3,
+      "true_positives": 0,
+      "true_negatives": 3,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": null,
+      "accuracy": 1.0
+    }
+  },
+  "evidence_link_accuracy": 1.0,
+  "source_coordinate_accuracy": 1.0,
+  "calculation_accuracy": 1.0,
+  "gap_radar_detection_rate": 1.0,
+  "mean_latency_ms": 0.01,
+  "total_execution_time_s": 0.0,
+  "failure_analysis": [],
+  "executive_verdict": "PASSED"
+}

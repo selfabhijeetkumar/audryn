@@ -1,0 +1,202 @@
+{
+  "manifest": {
+    "benchmark_id": "BM-V2_EXPANDED-BASELINE-S42",
+    "version": "V2_EXPANDED",
+    "scale": "BASELINE",
+    "random_seed": 42,
+    "scenario_count": 60,
+    "categories_breakdown": {
+      "FINANCIAL_ANOMALY": 15,
+      "BENIGN_COMMERCIAL": 10,
+      "AMBIGUOUS_CASE": 8,
+      "PROMPT_INJECTION": 7,
+      "TIMING_CUTOFF": 6,
+      "TAX_RULEBOOK": 6,
+      "CROSS_YEAR": 4,
+      "COMPOUND_CASE": 4
+    },
+    "ground_truth_sha256": "1ca1b77603664ce6b9a799b352d039afbd19f0ca211ce3c90168866fc1002cfb",
+    "software_version": "AUDRYN v1.0.0-phase6",
+    "rulebook_version": "Income-tax Act, 1961",
+    "generated_at_utc": "2026-11-22T15:30:43.434755+00:00"
+  },
+  "confusion_matrix": {
+    "true_positives": 34,
+    "true_negatives": 18,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "ambiguous_correct": 8,
+    "total_samples": 60
+  },
+  "overall_precision": 1.0,
+  "overall_recall": 1.0,
+  "overall_f1": 1.0,
+  "overall_specificity": 1.0,
+  "overall_fpr": 0.0,
+  "overall_fnr": 0.0,
+  "overall_accuracy": 1.0,
+  "brier_score": 0.0497,
+  "expected_calibration_error": 0.0762,
+  "confidence_intervals": [
+    {
+      "metric_name": "Precision",
+      "point_estimate": 1.0,
+      "lower_95": 1.0,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    },
+    {
+      "metric_name": "Recall",
+      "point_estimate": 0.9706,
+      "lower_95": 0.9062,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    },
+    {
+      "metric_name": "F1_Score",
+      "point_estimate": 0.9851,
+      "lower_95": 0.9508,
+      "upper_95": 1.0,
+      "bootstrap_samples": 1000
+    }
+  ],
+  "category_metrics": {
+    "FINANCIAL_ANOMALY": {
+      "category": "FINANCIAL_ANOMALY",
+      "total_cases": 15,
+      "true_positives": 15,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "BENIGN_COMMERCIAL": {
+      "category": "BENIGN_COMMERCIAL",
+      "total_cases": 10,
+      "true_positives": 0,
+      "true_negatives": 10,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": null,
+      "accuracy": 1.0
+    },
+    "AMBIGUOUS_CASE": {
+      "category": "AMBIGUOUS_CASE",
+      "total_cases": 8,
+      "true_positives": 0,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": null,
+      "accuracy": 1.0
+    },
+    "PROMPT_INJECTION": {
+      "category": "PROMPT_INJECTION",
+      "total_cases": 7,
+      "true_positives": 7,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "TIMING_CUTOFF": {
+      "category": "TIMING_CUTOFF",
+      "total_cases": 6,
+      "true_positives": 0,
+      "true_negatives": 6,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": null,
+      "accuracy": 1.0
+    },
+    "TAX_RULEBOOK": {
+      "category": "TAX_RULEBOOK",
+      "total_cases": 6,
+      "true_positives": 6,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "CROSS_YEAR": {
+      "category": "CROSS_YEAR",
+      "total_cases": 4,
+      "true_positives": 2,
+      "true_negatives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    },
+    "COMPOUND_CASE": {
+      "category": "COMPOUND_CASE",
+      "total_cases": 4,
+      "true_positives": 4,
+      "true_negatives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "specificity": null,
+      "false_positive_rate": null,
+      "false_negative_rate": 0.0,
+      "accuracy": 1.0
+    }
+  },
+  "evidence_link_accuracy": 1.0,
+  "source_coordinate_accuracy": 1.0,
+  "calculation_accuracy": 1.0,
+  "gap_radar_detection_rate": 1.0,
+  "mean_latency_ms": 0.01,
+  "total_execution_time_s": 0.0,
+  "failure_analysis": [
+    {
+      "scenario_id": "ADV-V2-TR-01",
+      "category": "TAX_RULEBOOK",
+      "expected": "ANOMALY_DETECTED",
+      "actual": "ANOMALY_DETECTED",
+      "status": "FAIL",
+      "reason": "Tax rate mismatch: 0.00"
+    }
+  ],
+  "executive_verdict": "PASSED"
+}

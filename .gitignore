@@ -1,0 +1,43 @@
+# Environments & Secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing & Linting
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build & Dependencies
+node_modules/
+dist/
+build/
+*.egg-info/
+
+# Databases & Local State
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Sensitive Financial Data & Private Uploads
+uploads/private/
+data/private/
+data/evidence/
+data/evidence_vault/
+data/reports/*.pdf
+data/reports/*.xlsx

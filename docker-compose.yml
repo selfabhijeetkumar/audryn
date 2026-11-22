@@ -1,0 +1,45 @@
+# AUDRYN — Docker Compose
+# Development environment: backend + Ollama
+#
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose logs backend   # View backend logs
+#   docker compose down           # Stop all services
+
+services:
+  backend:
+    build: .
+    container_name: audryn-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app
+      - AUDRYN_SECRET_KEY=${AUDRYN_SECRET_KEY:-CHANGE_ME_IN_PRODUCTION}
+      - AUDRYN_DB_PATH=data/db/audryn.db
+      - AUDRYN_EVIDENCE_DIR=data/evidence
+      - AUDRYN_CORS_ORIGINS=http://localhost:5173,http://localhost:4173
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: audryn-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    # Pull model after startup:
+    # docker exec audryn-ollama ollama pull qwen3:4b
+
+volumes:
+  ollama_data:

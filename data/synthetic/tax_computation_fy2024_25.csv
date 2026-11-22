@@ -1,0 +1,9 @@
+item,amount
+Profit Before Tax (PBT),875000.0
+Add: Book Depreciation,212000.0
+Less: Statutory Tax Depreciation (Claimed),212000.0
+Taxable Business Income,875000.0
+Corporate Tax @ 25% (Demonstration Rule),218750.0
+Surcharge @ 7%,15312.5
+Health & Education Cess @ 4%,9362.5
+Total Tax Liability Computed,243425.0

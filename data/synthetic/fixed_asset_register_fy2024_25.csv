@@ -1,0 +1,4 @@
+asset_id,asset_name,purchase_date,cost,opening_wdv,depreciation_method,statutory_rate,depreciation_claimed,closing_wdv
+AST-101,CNC Milling Machine 4-Axis,2021-06-15,600000.0,340000.0,WDV,0.15,51000.0,289000.0
+AST-102,Heavy Industrial Lathe,2022-09-10,750000.0,500000.0,WDV,0.15,125000.0,375000.0
+AST-103,Engineering CAD Workstations,2023-01-20,150000.0,90000.0,WDV,0.4,36000.0,54000.0
