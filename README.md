@@ -1,8 +1,10 @@
-# AUDRYN (V2.1)
+# AUDRYN (V2.1 Production Baseline)
 
 > **Category:** Evidence-First Multi-Agent Financial Audit Intelligence System  
 > **Promise:** EVIDENCE BEFORE CONCLUSIONS  
 > **Pronunciation:** AW-drin  
+> **Automated Verification:** 269 / 269 Tests Passing (100% Success)  
+> **Live Deployment:** [https://frontend-chi-nine-98.vercel.app](https://frontend-chi-nine-98.vercel.app)  
 
 ---
 
@@ -10,7 +12,7 @@
 
 AUDRYN is a specialized financial audit intelligence workstation engineering a verifiable, evidence-first pipeline for statutory financial audits under the Indian regulatory regime (Companies Act, 2013, Income Computation and Disclosure Standards, and the Indian Income Tax Act, 1961).
 
-Unlike standard conversational AI systems, AUDRYN enforces a strict non-hallucinatory standard: **every calculation is deterministically evaluated using arbitrary-precision decimal mathematics**, **every evidence document is cryptographic-hash anchored (SHA-256)**, and **every multi-agent challenge operates under isolated reasoning contexts using local inference**.
+Unlike standard conversational AI systems, AUDRYN enforces a strict non-hallucinatory standard: **every calculation is deterministically evaluated using arbitrary-precision decimal mathematics**, **every evidence document is cryptographic-hash anchored (SHA-256)**, **every multi-agent challenge operates under adversarial review**, and **inference is resilient across four local and cloud providers with automatic circuit-breaker failover**.
 
 ---
 

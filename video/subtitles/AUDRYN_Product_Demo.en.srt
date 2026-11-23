@@ -1,0 +1,115 @@
+1
+00:00:01,000 --> 00:00:07,500
+Welcome to AUDRYN — the evidence-first multi-agent financial audit intelligence system.
+
+2
+00:00:07,800 --> 00:00:13,500
+In modern statutory auditing, conclusions cannot precede evidence.
+
+3
+00:00:14,000 --> 00:00:20,500
+Black-box language models frequently hallucinate figures, invent references, and fail statutory rigor.
+
+4
+00:00:21,000 --> 00:00:26,500
+AUDRYN re-architects financial auditing from first principles: every claim is anchored to immutable evidence.
+
+5
+00:00:27,000 --> 00:00:32,000
+All arithmetic is strictly computed by deterministic Python Decimal engines.
+
+6
+00:00:32,500 --> 00:00:38,500
+Multi-agent investigations operate under adversarial review with full human partner sign-off.
+
+7
+00:00:39,000 --> 00:00:44,500
+Audits begin in the Evidence Vault. In Workspace 1 and 2, every workpaper is ingested.
+
+8
+00:00:45,000 --> 00:00:50,500
+Each file is stamped with an immutable SHA-256 cryptographic digest.
+
+9
+00:00:51,000 --> 00:00:57,000
+The Completeness Gate enforces that no investigation begins until required schedules are verified.
+
+10
+00:00:57,500 --> 00:01:03,500
+If an evidence file is altered by even a single byte, AUDRYN detects the mismatch instantly.
+
+11
+00:01:04,000 --> 00:01:10,000
+In Workspace 3 and 4, specialized multi-agent teams investigate the general ledger.
+
+12
+00:01:10,500 --> 00:01:17,000
+Tax Specialists, Forensic Investigators, and Evidence Matchers cross-reference entries against statutory criteria.
+
+13
+00:01:17,500 --> 00:01:23,500
+Notice: agents do not calculate numbers. All arithmetic is delegated to Python's Decimal engine.
+
+14
+00:01:24,000 --> 00:01:30,500
+The GAP RADAR visualizes reconciliation gaps, highlighting Section 40A(3) cash disallowances.
+
+15
+00:01:31,000 --> 00:01:37,500
+This is AUDRYN's core architectural distinction: the Counter-Evidence Engine.
+
+16
+00:01:38,000 --> 00:01:44,500
+While conventional AI prematurely labels anomalies as fraud, AUDRYN deploys adversarial review.
+
+17
+00:01:45,000 --> 00:01:51,500
+For each anomaly, the challenger searches for mitigating evidence — such as board approvals or reversals.
+
+18
+00:01:52,000 --> 00:01:58,000
+In Workspace 6, final audit authority remains exclusively human under ICAI standards.
+
+19
+00:01:58,500 --> 00:02:05,000
+Only an authorized signing partner can sign off, with mandatory acknowledgment of unresolved points.
+
+20
+00:02:05,500 --> 00:02:11,500
+In Workspace 7, the Indian Tax Rulebook calculates Section 115BAA corporate liabilities at 25.168%.
+
+21
+00:02:12,000 --> 00:02:18,000
+In Workspace 8, board-ready audit reports are compiled with a strict Not-Checked Register.
+
+22
+00:02:18,500 --> 00:02:25,500
+In Workspace 9, our 3D Provenance Graph visualizes the complete chain of custody.
+
+23
+00:02:26,000 --> 00:02:32,000
+Finally, Workspace 10 demonstrates production-grade AI resilience.
+
+24
+00:02:32,500 --> 00:02:39,500
+AUDRYN orchestrates four inference tiers: local private Ollama, Google Gemini 2.0 Flash, Groq, and NVIDIA NIM.
+
+25
+00:02:40,000 --> 00:02:46,000
+If a provider experiences rate limits, the circuit breaker automatically fails over with zero session loss.
+
+26
+00:02:46,500 --> 00:02:53,000
+Data governance guards ensure confidential client data is never transmitted to cloud providers.
+
+27
+00:02:53,500 --> 00:03:00,000
+AUDRYN delivers multi-agent intelligence anchored by deterministic proof.
+
+28
+00:03:00,500 --> 00:03:07,000
+269 automated tests, role-based access control, and zero floating-point errors.
+
+29
+00:03:07,500 --> 00:03:13,000
+AUDRYN: Evidence before conclusions.

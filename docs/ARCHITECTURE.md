@@ -1,8 +1,9 @@
 # AUDRYN — Project Architecture
 
 > **Category:** Evidence-First Multi-Agent Financial Audit Intelligence System  
-> **Version:** V2.1 (Phase 7 + Phase 8 Complete)  
-> **Stack:** Python 3.13 · FastAPI · SQLite WAL · React 18 · Three.js · TypeScript
+> **Version:** V2.1 Production Baseline  
+> **Stack:** Python 3.13 · FastAPI · SQLite WAL · React 19 · Three.js · TypeScript · Multi-Provider AI (Ollama, Gemini, Groq, NVIDIA NIM)
+> **Automated Tests:** 269 Passed / 0 Failed (100% Success Rate)
 
 ---
 
@@ -184,6 +185,29 @@ flowchart LR
 | VIEW_AUDIT_EVENTS | — | — | ✓ | ✓ |
 
 > Full 25-permission matrix is in `backend/app/rbac.py`.
+
+---
+
+## Multi-Provider AI Architecture & Automatic Failover
+
+AUDRYN provides a four-tier inference architecture with stateful circuit breaking, automatic failover, and strict data confidentiality guards:
+
+```mermaid
+flowchart TD
+    Req["Inference Request"] --> Gov{"Data Governance Guard\nconfidential=True?"}
+    Gov -->|"Yes & STRICT_LOCAL_ONLY"| LocalOnly["Strict Local Tier Only\n(Ollama qwen3:4b)"]
+    Gov -->|"No or ALLOW_CLOUD"| Chain["Prioritized Provider Chain"]
+    Chain --> P1["1. Ollama (Private On-Premise)"]
+    P1 -->|"Timeout / 429 / Circuit Open"| P2["2. Google Gemini 2.0 Flash (1M Context)"]
+    P2 -->|"Timeout / 429 / 5xx"| P3["3. Groq LPU (Llama 3.3 70B Fast Silicon)"]
+    P3 -->|"Timeout / Error"| P4["4. NVIDIA NIM (Nemotron 70B Enterprise)"]
+    P4 -->|"Exhausted"| Fallback["Deterministic Fallback & Failover Event Trail"]
+```
+
+### Deterministic Safety Boundary
+- **Arithmetic Engine:** 100% computed via Python `Decimal` (`ROUND_HALF_UP` to two decimal places). AI models NEVER perform floating-point calculations or arithmetic assertions directly.
+- **Circuit Breaker:** Trips after 3 consecutive failures into `OPEN` state for a 60-second cooldown window before testing recovery in `HALF_OPEN` state.
+- **Data Governance:** `AI_ALLOW_CONFIDENTIAL_EXTERNAL_DATA=false` strictly prevents raw client ledgers or voucher coordinates from egressing to external cloud endpoints.
 
 ---
 

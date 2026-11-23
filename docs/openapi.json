@@ -1610,6 +1610,86 @@
           }
         }
       }
+    },
+    "/api/v1/providers/status": {
+      "get": {
+        "tags": [
+          "AI Providers & Failover"
+        ],
+        "summary": "Get Providers Status",
+        "description": "Returns high-level status of all inference providers,\nactive primary model, rate-limit cooldowns, and failover event trail.",
+        "operationId": "get_providers_status_api_v1_providers_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/providers/health": {
+      "get": {
+        "tags": [
+          "AI Providers & Failover"
+        ],
+        "summary": "Get Providers Health",
+        "description": "Executes live parallel health checks across all registered providers\nand returns latency metrics and readiness status.",
+        "operationId": "get_providers_health_api_v1_providers_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/providers/failover/test": {
+      "post": {
+        "tags": [
+          "AI Providers & Failover"
+        ],
+        "summary": "Trigger Test Failover",
+        "description": "Test endpoint for Partner / Senior Auditor to verify failover logging and state tracking.",
+        "operationId": "trigger_test_failover_api_v1_providers_failover_test_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestFailoverRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2095,6 +2175,27 @@
           "opening_wdv"
         ],
         "title": "Section32DepreciationRequest"
+      },
+      "TestFailoverRequest": {
+        "properties": {
+          "from_provider": {
+            "type": "string",
+            "title": "From Provider",
+            "default": "ollama"
+          },
+          "to_provider": {
+            "type": "string",
+            "title": "To Provider",
+            "default": "gemini"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "default": "Simulated manual failover test"
+          }
+        },
+        "type": "object",
+        "title": "TestFailoverRequest"
       },
       "UpdateNotCheckedRequest": {
         "properties": {

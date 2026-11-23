@@ -16,6 +16,8 @@ import {
   Upload,
   RefreshCw,
   Lock,
+  Server,
+  Zap,
 } from 'lucide-react';
 import { PrototypeBadge } from '../../components/common/PrototypeBadge';
 import { StatusGlyph } from '../../components/common/StatusGlyph';
@@ -65,6 +67,10 @@ export const AppShell: React.FC = () => {
   const [loginUsername, setLoginUsername] = useState<string>('partner_sharma');
   const [loginPassword, setLoginPassword] = useState<string>('');
 
+  // AI Provider telemetry state
+  const [providerStatus, setProviderStatus] = useState<any>(null);
+  const [providerLoading, setProviderLoading] = useState<boolean>(false);
+
   // Auto-connect to backend on mount
   useEffect(() => {
     async function initBackend() {
@@ -97,7 +103,7 @@ export const AppShell: React.FC = () => {
   const loadLiveData = async () => {
     try {
       setIsLoading(true);
-      const [ev, fd, nc, cl, rp, comp, events] = await Promise.all([
+      const [ev, fd, nc, cl, rp, comp, events, pStatus] = await Promise.all([
         api.listEvidence(ENGAGEMENT_ID).catch(() => null),
         api.listFindings(ENGAGEMENT_ID).catch(() => null),
         api.listNotChecked(ENGAGEMENT_ID).catch(() => null),
@@ -105,6 +111,7 @@ export const AppShell: React.FC = () => {
         api.getLatestReport(ENGAGEMENT_ID).catch(() => null),
         api.evaluateCompleteness(ENGAGEMENT_ID).catch(() => null),
         api.listAuditEvents(ENGAGEMENT_ID).catch(() => null),
+        api.getProviderStatus().catch(() => null),
       ]);
 
       if (ev && ev.length > 0) setEvidenceList(ev);
@@ -114,10 +121,41 @@ export const AppShell: React.FC = () => {
       if (rp && rp.manifest) setReportManifest(rp.manifest);
       if (comp) setCompletenessResult(comp);
       if (events) setAuditEvents(events);
+      if (pStatus) setProviderStatus(pStatus);
     } catch {
       // Keep state
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadProviderStatus = async () => {
+    try {
+      setProviderLoading(true);
+      const res = await api.getProviderStatus();
+      setProviderStatus(res);
+      setStatusMessage({ type: 'success', text: 'AI provider telemetry refreshed.' });
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: 'Failed to fetch provider status: ' + (err.detail || err.message) });
+    } finally {
+      setProviderLoading(false);
+    }
+  };
+
+  const handleSimulateFailover = async () => {
+    try {
+      setProviderLoading(true);
+      const res = await api.testFailover('ollama', 'gemini', 'Manual operator simulation: Local Ollama timeout failover triggered');
+      setStatusMessage({ type: 'success', text: `Failover Recorded: ${res.event.from_provider} -> ${res.event.to_provider} (${res.event.reason})` });
+      if (res.summary) {
+        setProviderStatus(res.summary);
+      } else {
+        await loadProviderStatus();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: 'Simulated failover error: ' + (err.detail || err.message) });
+    } finally {
+      setProviderLoading(false);
     }
   };
 
@@ -1132,6 +1170,178 @@ export const AppShell: React.FC = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* 10.2 AI Provider Architecture & Automatic Failover Matrix */}
+              <div className="bg-white border border-[#E8E4DC] p-6 space-y-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-[#E8E4DC] pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-5 h-5 text-[#B08D4F]" />
+                      <h3 className="font-serif text-lg text-[#1A1714]">Multi-Provider AI Architecture & Failover Matrix</h3>
+                    </div>
+                    <p className="font-sans text-xs text-[#5C5752] mt-0.5">
+                      Deterministic Python Decimal engine strictly executes arithmetic. Multi-provider resilience across Ollama, Gemini, Groq, and NVIDIA NIM.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={loadProviderStatus}
+                      disabled={providerLoading}
+                      className="px-3 py-1.5 border border-[#7A746A] text-[#1A1714] hover:bg-[#F6F3EB] font-mono text-xs flex items-center gap-1.5 transition-colors"
+                    >
+                      <RefreshCw className={`w-3 h-3 ${providerLoading ? 'animate-spin' : ''}`} />
+                      <span>Refresh Telemetry</span>
+                    </button>
+                    <button
+                      onClick={handleSimulateFailover}
+                      disabled={providerLoading}
+                      className="px-3 py-1.5 bg-[#1A1714] text-[#F6F3EB] hover:bg-[#332F2B] font-mono text-xs flex items-center gap-1.5 transition-colors"
+                    >
+                      <Zap className="w-3 h-3 text-[#B08D4F]" />
+                      <span>Simulate Failover</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* System Policy Metrics */}
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 font-mono text-xs">
+                  <div className="bg-[#FDFBF7] border border-[#E8E4DC] p-3">
+                    <span className="text-[10px] text-[#7A746A] uppercase block">Execution Mode</span>
+                    <span className="font-bold text-[#1A1714] uppercase">
+                      {providerStatus?.mode || 'LOCAL_HYBRID'}
+                    </span>
+                  </div>
+                  <div className="bg-[#FDFBF7] border border-[#E8E4DC] p-3">
+                    <span className="text-[10px] text-[#7A746A] uppercase block">Data Governance</span>
+                    <span className="font-bold text-[#1A7A40]">
+                      {providerStatus?.confidentiality_mode || 'STRICT_LOCAL_ONLY'}
+                    </span>
+                  </div>
+                  <div className="bg-[#FDFBF7] border border-[#E8E4DC] p-3">
+                    <span className="text-[10px] text-[#7A746A] uppercase block">Primary Provider</span>
+                    <span className="font-bold text-[#B08D4F] uppercase">
+                      {providerStatus?.active_primary_provider || 'OLLAMA'}
+                    </span>
+                  </div>
+                  <div className="bg-[#FDFBF7] border border-[#E8E4DC] p-3">
+                    <span className="text-[10px] text-[#7A746A] uppercase block">Deterministic Engine</span>
+                    <span className="font-bold text-[#1A7A40]">
+                      PYTHON DECIMAL ACTIVE
+                    </span>
+                  </div>
+                </div>
+
+                {/* Provider Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {[
+                    {
+                      id: 'ollama',
+                      title: 'Ollama (Local Private)',
+                      model: 'qwen3:4b',
+                      type: 'Local On-Premise',
+                      priority: 'Priority #1 (Local)',
+                      privacy: '100% Air-Gapped Local',
+                    },
+                    {
+                      id: 'gemini',
+                      title: 'Google Gemini',
+                      model: 'gemini-2.0-flash',
+                      type: 'Cloud Primary',
+                      priority: 'Priority #2 (Cloud Primary)',
+                      privacy: '1M Context Deep Audit',
+                    },
+                    {
+                      id: 'groq',
+                      title: 'Groq LPU Silicon',
+                      model: 'llama-3.3-70b-versatile',
+                      type: 'Cloud Secondary',
+                      priority: 'Priority #3 (Fast Failover)',
+                      privacy: 'Ultra-Low Latency LPU',
+                    },
+                    {
+                      id: 'nvidia_nim',
+                      title: 'NVIDIA NIM Nemotron',
+                      model: 'llama-3.1-nemotron-70b',
+                      type: 'Cloud Enterprise',
+                      priority: 'Priority #4 (Enterprise)',
+                      privacy: 'Enterprise Nemotron',
+                    },
+                  ].map((p) => {
+                    const info = providerStatus?.providers?.[p.id];
+                    const isConfigured = info ? info.configured : (p.id === 'ollama');
+                    const statusStr = info ? info.last_status : (isConfigured ? 'AVAILABLE' : 'NOT_CONFIGURED');
+                    const circuitState = info ? info.circuit_state : 'CLOSED';
+
+                    return (
+                      <div key={p.id} className="bg-[#FDFBF7] border border-[#E8E4DC] p-3.5 space-y-2 font-mono text-xs">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-bold text-[#1A1714] font-sans">{p.title}</div>
+                            <div className="text-[11px] text-[#5C5752]">{p.model}</div>
+                          </div>
+                          <span
+                            className={`px-1.5 py-0.5 text-[9px] font-bold border ${
+                              statusStr === 'AVAILABLE'
+                                ? 'bg-[#1A7A40]/10 text-[#1A7A40] border-[#1A7A40]'
+                                : statusStr === 'RATE_LIMITED'
+                                ? 'bg-[#D97706]/10 text-[#D97706] border-[#D97706]'
+                                : 'bg-[#7A746A]/10 text-[#7A746A] border-[#7A746A]'
+                            }`}
+                          >
+                            {statusStr}
+                          </span>
+                        </div>
+                        <div className="pt-2 border-t border-[#E8E4DC] text-[11px] space-y-1 text-[#5C5752]">
+                          <div className="flex justify-between">
+                            <span>Circuit:</span>
+                            <span className="font-bold text-[#1A1714]">{circuitState}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Role:</span>
+                            <span>{p.priority}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Governance:</span>
+                            <span className="text-[#1A7A40] text-[10px]">{p.privacy}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Recent Failover Telemetry Trail */}
+                <div className="pt-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-mono text-[10px] text-[#7A746A] uppercase block">
+                      RECENT AUTOMATIC FAILOVER EVENTS:
+                    </span>
+                    <span className="font-mono text-[10px] text-[#5C5752]">
+                      Zero Disruption • Stateful Recovery
+                    </span>
+                  </div>
+                  <div className="bg-[#121110] text-[#9C968F] p-3 font-mono text-[10px] space-y-1.5 max-h-40 overflow-y-auto">
+                    {providerStatus?.recent_failovers && providerStatus.recent_failovers.length > 0 ? (
+                      providerStatus.recent_failovers.map((ev: any, idx: number) => (
+                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-[#2A2724] pb-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#D97706]">FAILOVER:</span>
+                            <span className="text-white font-bold">{ev.from_provider}</span>
+                            <span>➔</span>
+                            <span className="text-[#1A7A40] font-bold">{ev.to_provider}</span>
+                            <span className="text-[#5C5752]">({ev.reason})</span>
+                          </div>
+                          <span className="text-[#7A746A]">{ev.timestamp}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-[#5C5752] italic">
+                        No failover events recorded. All primary inference requests operating normally.
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -47,13 +47,16 @@
 | CORS | Restricted to `localhost:5173`, `localhost:4173` |
 | CDN dependencies | None — all fonts self-hosted |
 
-### Data Integrity
+### Data Integrity & AI Governance
 | Control | Implementation |
 |---------|---------------|
 | Evidence SHA-256 | Computed at upload, stored in DB |
 | Hash verification API | `POST /evidence/{id}/verify-hash` |
 | Three independent evidence dimensions | Calculation Correctness / Source Integrity / Evidence Validity — never merged |
 | Audit trail | Append-only `audit_events` table |
+| Data Governance Guard | `AI_ALLOW_CONFIDENTIAL_EXTERNAL_DATA=false` strictly blocks confidential ledgers from cloud LLMs |
+| Ephemeral Storage Protection | Render deployment restricted to `DEMO_SYNTHETIC` mode to prevent confidential data loss on ephemeral containers |
+| Partner Credential Bootstrap | Environment CSPRNG generation (`secrets.token_urlsafe(32)`) in production when unset |
 
 ---
 

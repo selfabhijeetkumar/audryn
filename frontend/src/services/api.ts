@@ -324,6 +324,57 @@ class AudrynApiClient {
       body: formData,
     });
   }
+
+  // 13. AI Providers & Failover Telemetry
+  async getProviderStatus() {
+    return this.request<{
+      mode: string;
+      confidentiality_mode: string;
+      priority_chain: string[];
+      active_primary_provider: string;
+      providers: Record<string, {
+        name: string;
+        display_name: string;
+        type: string;
+        model: string;
+        configured: boolean;
+        last_status: string;
+        circuit_state: string;
+        consecutive_failures: number;
+        blocked_seconds_remaining: number;
+        priority: number;
+      }>;
+      recent_failovers: Array<{
+        timestamp: string;
+        from_provider: string;
+        to_provider: string;
+        reason: string;
+        status: string;
+        latency_ms: number;
+      }>;
+    }>('/providers/status');
+  }
+
+  async getProviderHealth() {
+    return this.request<{
+      status: string;
+      timestamp_utc: string;
+      total_providers: number;
+      configured_providers: number;
+      available_providers: number;
+      active_mode: string;
+      deterministic_engine_fallback: string;
+      providers: Record<string, any>;
+    }>('/providers/health');
+  }
+
+  async testFailover(fromProvider: string, toProvider: string, reason: string) {
+    return this.request<any>('/providers/failover/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from_provider: fromProvider, to_provider: toProvider, reason }),
+    });
+  }
 }
 
 export const api = new AudrynApiClient();

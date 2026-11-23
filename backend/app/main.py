@@ -29,6 +29,7 @@ from backend.app.api.calculations import router as calculations_router
 from backend.app.api.provenance import router as provenance_router
 from backend.app.api.reports import router as reports_router
 from backend.app.api.audit_events import router as audit_events_router
+from backend.app.api.providers import router as providers_router
 from backend.db.repositories import (
     EvidenceRepository,
     FindingsRepository,
@@ -290,10 +291,21 @@ ALLOWED_ORIGINS = [
     "http://localhost:4173",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:4173",
+    "https://frontend-chi-nine-98.vercel.app",
 ]
+_extra_frontend = os.environ.get("FRONTEND_URL")
+if _extra_frontend and _extra_frontend not in ALLOWED_ORIGINS:
+    ALLOWED_ORIGINS.append(_extra_frontend)
+_vercel_url = os.environ.get("VERCEL_URL")
+if _vercel_url:
+    _v_origin = f"https://{_vercel_url}" if not _vercel_url.startswith("http") else _vercel_url
+    if _v_origin not in ALLOWED_ORIGINS:
+        ALLOWED_ORIGINS.append(_v_origin)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
@@ -335,6 +347,7 @@ app.include_router(calculations_router, prefix="/api/v1")
 app.include_router(provenance_router, prefix="/api/v1")
 app.include_router(reports_router, prefix="/api/v1")
 app.include_router(audit_events_router, prefix="/api/v1")
+app.include_router(providers_router, prefix="/api/v1")
 
 
 def generate_openapi_spec():

@@ -47,15 +47,17 @@ SQLite: evidence_validity_decisions
 Investigation trigger (API)
     │
     ▼
-LangGraph Orchestrator (Python process)
-    │  HTTP POST to localhost:11434 (loopback only)
-    │  Request: { model: "qwen3:4b", messages: [...] }
+ProviderRouter (Python process)
+    │  Enforces Data Governance Guard:
+    │  If confidential=True and AI_ALLOW_CONFIDENTIAL_EXTERNAL_DATA=false:
+    │     --> Restricts exclusively to local Ollama (127.0.0.1:11434 loopback)
+    │     --> External Cloud (Gemini, Groq, NVIDIA NIM) STRICTLY BLOCKED
+    │  If cloud authorized:
+    │     --> Stateful prioritized failover: Ollama -> Gemini -> Groq -> NVIDIA NIM
     ▼
-Ollama (local daemon, port 11434)
-    │  Qwen3:4B model running locally
-    │  No data leaves the machine (loopback)
+Inference Provider (Local or Cloud TLS-Encrypted)
     ▼
-Response → stored in SQLite investigation_jobs / findings
+Response Normalizer → Extracts JSON → Stored in SQLite findings table
 ```
 
 > **[NOTE]** If an operator configures an external Ollama endpoint or cloud LLM API, evidence text would be transmitted externally. The code supports this configuration; it is not the default.
