@@ -1,13 +1,29 @@
 # AUDRYN (V2.1 Production Baseline)
 
+<div align="center">
+
+[![Live Application](https://img.shields.io/badge/🚀%20Live%20App-Vercel%20Production-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-chi-nine-98.vercel.app/app)
+[![API Gateway](https://img.shields.io/badge/⚡%20Backend%20API-Render%20Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://audryn-api.onrender.com)
+[![API Docs](https://img.shields.io/badge/📚%20API%20Docs-Swagger%20OpenAPI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://audryn-api.onrender.com/docs)
+[![Verification](https://img.shields.io/badge/🛡️%20Tests-269%20Passing-brightgreen?style=for-the-badge)](https://github.com/selfabhijeetkumar/audryn)
+
+</div>
+
+---
+
+### 🌐 Live Production Deployments & Cloud Endpoints
+
+| Service | Platform | Deployed URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Audit Workstation (Frontend)** | Vercel | [https://frontend-chi-nine-98.vercel.app/app](https://frontend-chi-nine-98.vercel.app/app) | `LIVE` |
+| **API Gateway (Backend)** | Render | [https://audryn-api.onrender.com](https://audryn-api.onrender.com) | `LIVE` |
+| **System Health Check** | Render | [https://audryn-api.onrender.com/api/v1/health](https://audryn-api.onrender.com/api/v1/health) | `HEALTHY` |
+| **Interactive API Documentation** | Swagger / OpenAPI | [https://audryn-api.onrender.com/docs](https://audryn-api.onrender.com/docs) | `ONLINE` |
+
 > **Category:** Evidence-First Multi-Agent Financial Audit Intelligence System  
 > **Promise:** EVIDENCE BEFORE CONCLUSIONS  
 > **Pronunciation:** AW-drin  
 > **Automated Verification:** 269 / 269 Tests Passing (100% Success)  
-> **Live Frontend (Vercel):** [https://frontend-chi-nine-98.vercel.app/app](https://frontend-chi-nine-98.vercel.app/app)  
-> **Live Backend API (Render):** [https://audryn-api.onrender.com](https://audryn-api.onrender.com)  
-> **Live API Health Check:** [https://audryn-api.onrender.com/api/v1/health](https://audryn-api.onrender.com/api/v1/health)  
-> **Live Swagger API Docs:** [https://audryn-api.onrender.com/docs](https://audryn-api.onrender.com/docs)  
 
 ---
 
