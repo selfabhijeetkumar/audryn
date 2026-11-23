@@ -4,7 +4,10 @@
  * Supports automatic CSRF token propagation, session cookies, and correlation IDs.
  */
 
-const API_BASE = '/api/v1';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || 
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    ? 'https://audryn-api.onrender.com/api/v1'
+    : '/api/v1');
 
 export class ApiError extends Error {
   status: number;
