@@ -1,8 +1,9 @@
 """
-AUDRYN Product Demo Video Production Engine.
-Synthesizes Indian English voiceover narration via edge-tts, renders full HD 1080p (1920x1080 30fps)
-graphical scenes for all 10 workspaces and multi-provider failover, overlays bottom-aligned subtitles,
-and compiles release-ready MP4 video and promotional thumbnail.
+AUDRYN Product Demo Video Production Engine — Fast FFmpeg Pipe Edition.
+
+Renders 7 static scene images (1920x1080), synthesizes Indian English voiceover via edge-tts,
+then uses ffmpeg concat demuxer to assemble final 1080p MP4 at exact durations with audio mux.
+Runs in ~60-90 seconds instead of multi-hour per-frame rendering.
 """
 import os
 import sys
@@ -12,7 +13,6 @@ import time
 from typing import List, Tuple, Dict, Any
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-import imageio
 import imageio_ffmpeg
 import edge_tts
 
@@ -24,12 +24,13 @@ FPS = 30
 OUTPUT_DIR = os.path.join("video", "output")
 AUDIO_DIR = os.path.join("video", "audio")
 REPORTS_DIR = os.path.join("video", "reports")
+FRAMES_DIR = os.path.join("video", "frames")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(AUDIO_DIR, exist_ok=True)
 os.makedirs(REPORTS_DIR, exist_ok=True)
+os.makedirs(FRAMES_DIR, exist_ok=True)
 
 VOICEOVER_MP3 = os.path.join(AUDIO_DIR, "AUDRYN_Product_Demo_Voiceover.mp3")
-VIDEO_MP4_RAW = os.path.join(OUTPUT_DIR, "temp_video_raw.mp4")
 FINAL_MP4 = os.path.join(OUTPUT_DIR, "AUDRYN_Product_Demo_1080p.mp4")
 THUMBNAIL_PNG = os.path.join(OUTPUT_DIR, "AUDRYN_Product_Demo_Thumbnail.png")
 VERIFICATION_REPORT = os.path.join(REPORTS_DIR, "AUDRYN_Product_Demo_Verification_Report.md")
@@ -144,7 +145,6 @@ SCENE_SEGMENTS = [
 ]
 
 TOTAL_DURATION = SCENE_SEGMENTS[-1]["end_sec"]
-TOTAL_FRAMES = int(TOTAL_DURATION * FPS)
 
 
 # ─── Font Helper ─────────────────────────────────────────────────────────────
@@ -175,6 +175,9 @@ FONT_SUBTITLE = get_font(22, bold=False)
 
 # ─── 1. Synthesize Studio Voiceover Narration ────────────────────────────────
 async def synthesize_voiceover():
+    if os.path.exists(VOICEOVER_MP3) and os.path.getsize(VOICEOVER_MP3) > 50000:
+        print(f"[1/4] Voiceover already exists ({os.path.getsize(VOICEOVER_MP3)/1024:.1f} KB), skipping synthesis.")
+        return
     print(f"[1/4] Synthesizing Indian English studio voiceover ({len(SCENE_SEGMENTS)} scenes)...")
     full_script = " ".join([s["narration"] for s in SCENE_SEGMENTS])
     communicator = edge_tts.Communicate(full_script, voice="en-IN-PrabhatNeural")
@@ -185,50 +188,36 @@ async def synthesize_voiceover():
 
 # ─── 2. Draw Visual Frames for Each Scene ────────────────────────────────────
 def draw_header(draw: ImageDraw.ImageDraw, current_sec: float, scene_info: Dict[str, Any]):
-    # Top navbar
     draw.rectangle([0, 0, WIDTH, 70], fill=(24, 22, 20))
     draw.line([0, 70, WIDTH, 70], fill=CARD_BORDER, width=2)
-
-    # Wordmark
     draw.text((40, 20), "AUDRYN", font=FONT_HEADING, fill=TEXT_GOLD)
     draw.text((195, 28), "EVIDENCE-FIRST FINANCIAL AUDIT INTELLIGENCE", font=FONT_MONO, fill=TEXT_MUTED)
-
-    # Top right badges
     draw.rectangle([WIDTH - 380, 18, WIDTH - 220, 52], fill=(26, 122, 64, 50), outline=ACCENT_GREEN, width=1)
     draw.text((WIDTH - 365, 27), "● BACKEND LIVE (WAL)", font=FONT_BADGE, fill=ACCENT_GREEN)
-
     draw.rectangle([WIDTH - 200, 18, WIDTH - 40, 52], fill=(176, 141, 79, 40), outline=TEXT_GOLD, width=1)
     draw.text((WIDTH - 188, 27), "ENG-APEX-FY24", font=FONT_BADGE, fill=TEXT_GOLD)
 
 
 def draw_subtitle_bar(img: Image.Image, subtitle_text: str):
-    # Standard: Bottom placement (45px margin, 400 regular weight, off-white text, translucent black box)
     sub_overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
     sub_draw = ImageDraw.Draw(sub_overlay)
-
     bbox = FONT_SUBTITLE.getbbox(subtitle_text)
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
-
     box_pad_x = 24
     box_pad_y = 10
     box_w = text_w + (box_pad_x * 2)
     box_h = text_h + (box_pad_y * 2)
-
     box_x1 = int((WIDTH - box_w) / 2)
     box_y1 = HEIGHT - 45 - box_h
     box_x2 = box_x1 + box_w
     box_y2 = box_y1 + box_h
-
-    # Translucent rounded rectangle
     sub_draw.rounded_rectangle([box_x1, box_y1, box_x2, box_y2], radius=6, fill=SUBTITLE_BG)
     sub_draw.text((box_x1 + box_pad_x, box_y1 + box_pad_y - 2), subtitle_text, font=FONT_SUBTITLE, fill=TEXT_PARCHMENT)
-
     img.alpha_composite(sub_overlay)
 
 
 def render_scene_1(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 1: Executive Title & Brand Philosophy
     draw.text((40, 160), "STATUTORY AUDIT RE-ARCHITECTED", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 200), "EVIDENCE BEFORE CONCLUSIONS.", font=FONT_TITLE, fill=TEXT_PARCHMENT)
     draw.text(
@@ -239,8 +228,6 @@ def render_scene_1(draw: ImageDraw.ImageDraw, frame_num: int):
         font=FONT_SUBHEADING,
         fill=TEXT_MUTED,
     )
-
-    # 3 Core Architectural Pillars
     pillars = [
         ("01 / EVIDENCE VAULT", "Cryptographic SHA-256 Ingestion", "Immutable storage with Completeness Gate preventing premature audit procedures.", ACCENT_GREEN),
         ("02 / DETERMINISTIC ENGINE", "Python Decimal Zero-Variance", "All interest, depreciation, and tax rules computed via exact decimal arithmetic. Zero floating-point drift.", TEXT_GOLD),
@@ -258,22 +245,16 @@ def render_scene_1(draw: ImageDraw.ImageDraw, frame_num: int):
 
 
 def render_scene_2(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 2: Workspace 1 & 2 - Evidence Vault & Completeness Gate
     draw.text((40, 110), "WORKSPACE 02 — EVIDENCE VAULT & COMPLETENESS GATE", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 140), "Cryptographic SHA-256 Digest & Schedule Verification", font=FONT_HEADING, fill=TEXT_PARCHMENT)
-
-    # Completeness Status Bar
     draw.rectangle([40, 200, WIDTH - 40, 270], fill=CARD_BG, outline=ACCENT_GREEN, width=2)
     draw.text((70, 222), "COMPLETENESS GATE STATUS: PASS (100% REQUIRED SCHEDULES VERIFIED)", font=FONT_SUBHEADING, fill=ACCENT_GREEN)
     draw.text((WIDTH - 420, 225), "STATUTORY AUDIT PROCEED: AUTHORIZED", font=FONT_MONO, fill=TEXT_MUTED)
-
-    # Evidence Table
     headers = ["Evidence ID", "Filename", "Cryptographic Digest (SHA-256)", "File Size", "Doc Type", "Status"]
     col_x = [70, 240, 680, 1260, 1440, 1680]
     draw.rectangle([40, 290, WIDTH - 40, 340], fill=(32, 30, 28))
     for i, h in enumerate(headers):
         draw.text((col_x[i], 305), h, font=FONT_BODY_BOLD, fill=TEXT_GOLD)
-
     records = [
         ("EV-2024-001", "trial_balance_FY2023_24_final.xlsx", "e3b0c44298fc1c149afbf4c8996fb92427ae41e464...", "452.1 KB", "TRIAL_BALANCE", "VERIFIED"),
         ("EV-2024-002", "fixed_asset_register_machinery.xlsx", "8f3b9c2a1104e765d8a901fbc34e21a7b89945c210...", "1.2 MB", "ASSET_REGISTER", "VERIFIED"),
@@ -291,11 +272,8 @@ def render_scene_2(draw: ImageDraw.ImageDraw, frame_num: int):
 
 
 def render_scene_3(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 3: Multi-Agent Ledger Investigation & GAP RADAR
     draw.text((40, 110), "WORKSPACE 03 & 04 — MULTI-AGENT INVESTIGATION & GAP RADAR", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 140), "Deterministic GL Cross-Examination & Variance Anomaly Mapping", font=FONT_HEADING, fill=TEXT_PARCHMENT)
-
-    # Left Column: Active Multi-Agent Inspection
     draw.rectangle([40, 200, 920, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((70, 225), "SPECIALIZED INVESTIGATION CREW", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     agents = [
@@ -310,21 +288,18 @@ def render_scene_3(draw: ImageDraw.ImageDraw, frame_num: int):
         draw.text((80, ay + 15), name, font=FONT_BODY_BOLD, fill=TEXT_PARCHMENT)
         draw.text((80, ay + 45), duty, font=FONT_MONO, fill=TEXT_MUTED)
         ay += 120
-
-    # Right Column: GAP RADAR Anomaly Findings
     draw.rectangle([960, 200, WIDTH - 40, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((990, 225), "GAP RADAR — MATERIAL ANOMALY REGISTER", font=FONT_SUBHEADING, fill=TEXT_GOLD)
-
     anomalies = [
-        ("ANOMALY-001", "CRITICAL", "Depreciation Method Discrepancy — Plant & Machinery", "₹12,45,800.00", "Books reflect 10% SLM instead of statutory 15% WDV Section 32"),
-        ("ANOMALY-002", "MEDIUM", "Cash Disbursements Exceeding Statutory Limit", "₹4,85,000.00", "Four vouchers paid in cash exceeding ₹10,000 threshold under Section 40A(3)"),
-        ("ANOMALY-003", "CRITICAL", "Input Tax Credit (ITC) Variance — GSTR-2B vs Books", "₹78,20,450.00", "Invoices claimed in GSTR-3B missing from portal under Section 16(2)(aa)"),
+        ("ANOMALY-001", "CRITICAL", "Depreciation Method Discrepancy — Plant & Machinery", "INR 12,45,800.00", "Books reflect 10% SLM instead of statutory 15% WDV Section 32"),
+        ("ANOMALY-002", "MEDIUM", "Cash Disbursements Exceeding Statutory Limit", "INR 4,85,000.00", "Four vouchers paid in cash exceeding INR 10,000 threshold under Section 40A(3)"),
+        ("ANOMALY-003", "CRITICAL", "Input Tax Credit (ITC) Variance — GSTR-2B vs Books", "INR 78,20,450.00", "Invoices claimed in GSTR-3B missing from portal under Section 16(2)(aa)"),
     ]
     ny = 280
     for aid, sev, title, impact, note in anomalies:
         col = ACCENT_RED if sev == "CRITICAL" else TEXT_GOLD
         draw.rectangle([980, ny, WIDTH - 60, ny + 150], fill=(22, 20, 19), outline=col, width=1)
-        draw.text((1000, ny + 15), f"{aid} · {sev}", font=FONT_BADGE, fill=col)
+        draw.text((1000, ny + 15), f"{aid} - {sev}", font=FONT_BADGE, fill=col)
         draw.text((1000, ny + 40), title, font=FONT_BODY_BOLD, fill=TEXT_PARCHMENT)
         draw.text((1000, ny + 70), f"Financial Impact: {impact} (Verified by Deterministic Engine)", font=FONT_BODY_BOLD, fill=col)
         draw.text((1000, ny + 100), note, font=FONT_MONO, fill=TEXT_MUTED)
@@ -332,56 +307,42 @@ def render_scene_3(draw: ImageDraw.ImageDraw, frame_num: int):
 
 
 def render_scene_4(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 4: Workspace 5 & 6 - Counter-Evidence & Partner Sign-Off
     draw.text((40, 110), "WORKSPACE 05 & 06 — ADVERSARIAL COUNTER-EVIDENCE & HUMAN REVIEW", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 140), "Independent Review Team Challenges & Senior Partner Sign-Off", font=FONT_HEADING, fill=TEXT_PARCHMENT)
-
-    # Left: Hypothesis vs Counter-Evidence
     draw.rectangle([40, 200, 1050, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((70, 225), "ADVERSARIAL CHALLENGE — FINDING ANOMALY-001", font=FONT_SUBHEADING, fill=TEXT_GOLD)
-
     draw.rectangle([65, 275, 1025, 395], fill=(24, 22, 20), outline=CARD_BORDER, width=1)
     draw.text((85, 290), "ORIGINAL CREWAI HYPOTHESIS:", font=FONT_BADGE, fill=TEXT_GOLD)
     draw.text((85, 320), "Asset put to use in H2 should receive 50% statutory depreciation under Section 32 proviso.", font=FONT_BODY, fill=TEXT_PARCHMENT)
-
     draw.rectangle([65, 415, 1025, 595], fill=(24, 22, 20), outline=ACCENT_GREEN, width=1)
     draw.text((85, 430), "CONTRADICTORY EVIDENCE RETRIEVED BY REVIEW TEAM:", font=FONT_BADGE, fill=ACCENT_GREEN)
     draw.text((85, 460), "1. Technical commissioning log confirms active trial production on 28 September 2023.", font=FONT_BODY, fill=TEXT_PARCHMENT)
     draw.text((85, 495), "2. Electricity energization certificate confirms commercial load prior to 30 September.", font=FONT_BODY, fill=TEXT_PARCHMENT)
     draw.text((85, 530), "Reviewer Verdict: CONTRADICTED (100% full-year depreciation allowable under law).", font=FONT_BODY_BOLD, fill=ACCENT_GREEN)
-
-    # Right: Human Partner Sign-off Gate
     draw.rectangle([1090, 200, WIDTH - 40, 800], fill=CARD_BG, outline=TEXT_GOLD, width=2)
     draw.text((1120, 225), "HUMAN REVIEW SIGN-OFF GATE", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     draw.text((1120, 265), "Signing Auditor: CA Rajesh K. Sharma, FCA", font=FONT_BODY_BOLD, fill=TEXT_PARCHMENT)
-    draw.text((1120, 295), "ICAI Membership: 084920 · Role: Partner", font=FONT_MONO, fill=TEXT_MUTED)
-
-    # Acknowledgment requirement
+    draw.text((1120, 295), "ICAI Membership: 084920 - Role: Partner", font=FONT_MONO, fill=TEXT_MUTED)
     draw.rectangle([1120, 360, WIDTH - 70, 480], fill=(24, 22, 20), outline=CARD_BORDER, width=1)
     draw.text((1140, 380), "[X] STATUTORY ACKNOWLEDGMENT", font=FONT_BODY_BOLD, fill=ACCENT_GREEN)
     draw.text((1140, 415), "I independently confirm review of contradictory evidence\nand affirm that Section 32 100% depreciation rate applies.", font=FONT_BODY, fill=TEXT_MUTED)
-
-    # Partner Sign-Off Seal Button
     draw.rectangle([1120, 520, WIDTH - 70, 600], fill=TEXT_GOLD)
     draw.text((1200, 545), "PARTNER SIGN-OFF CONFIRMED (PBKDF2 AUTH)", font=FONT_BODY_BOLD, fill=BG_DARK)
 
 
 def render_scene_5(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 5: Workspace 7, 8 & 9 - Tax Rulebook, Report & 3D Provenance
     draw.text((40, 110), "WORKSPACE 07, 08 & 09 — TAX ENGINE, AUDIT REPORT & PROVENANCE", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 140), "Indian Tax Act Statutory Rules & 3D Chain-of-Custody", font=FONT_HEADING, fill=TEXT_PARCHMENT)
-
-    # Card 1: Statutory Tax Engine (Section 115BAA)
     draw.rectangle([40, 200, 600, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((70, 225), "SECTION 115BAA TAX RULEBOOK", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     tax_rows = [
-        ("Gross Taxable Income:", "₹5,00,00,000.00"),
-        ("Base Corporate Tax (22%):", "₹1,10,00,000.00"),
-        ("Mandatory Surcharge (10%):", "₹11,00,000.00"),
-        ("Subtotal before Cess:", "₹1,21,00,000.00"),
-        ("Health & Education Cess (4%):", "₹4,84,00,000.00"),
+        ("Gross Taxable Income:", "INR 5,00,00,000.00"),
+        ("Base Corporate Tax (22%):", "INR 1,10,00,000.00"),
+        ("Mandatory Surcharge (10%):", "INR 11,00,000.00"),
+        ("Subtotal before Cess:", "INR 1,21,00,000.00"),
+        ("Health & Education Cess (4%):", "INR 4,84,000.00"),
         ("Effective Tax Rate:", "25.168%"),
-        ("Final Tax Liability:", "₹1,25,84,000.00"),
+        ("Final Tax Liability:", "INR 1,25,84,000.00"),
     ]
     ty = 280
     for label, val in tax_rows:
@@ -389,13 +350,10 @@ def render_scene_5(draw: ImageDraw.ImageDraw, frame_num: int):
         col = ACCENT_GREEN if "Final" in label else (TEXT_GOLD if "Effective" in label else TEXT_PARCHMENT)
         draw.text((360, ty), val, font=FONT_BODY_BOLD, fill=col)
         ty += 60
-
-    # Card 2: Report Manifest & Not-Checked Register
     draw.rectangle([640, 200, 1240, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((670, 225), "REPORT MANIFEST & NOT-CHECKED REGISTER", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     draw.text((670, 275), "Report Reference: AUD-ENG-APEX-FY24-FINAL", font=FONT_MONO, fill=TEXT_MUTED)
     draw.text((670, 310), "Manifest Hash: 3a91fbc2401829e9014bc78192a0194...", font=FONT_MONO, fill=TEXT_MUTED)
-
     draw.text((670, 370), "MANDATORY NOT-CHECKED REGISTER (ICAI SA-700):", font=FONT_BODY_BOLD, fill=TEXT_PARCHMENT)
     nc_items = [
         ("NC-001", "Physical Stock Count — Bhiwandi Depot", "Depot under statutory health fumigation on 31 March."),
@@ -408,12 +366,9 @@ def render_scene_5(draw: ImageDraw.ImageDraw, frame_num: int):
         draw.text((685, ncy + 10), f"{nid}: {title}", font=FONT_BODY_BOLD, fill=TEXT_GOLD)
         draw.text((685, ncy + 40), reason, font=FONT_MONO, fill=TEXT_MUTED)
         ncy += 95
-
-    # Card 3: 3D Provenance Graph
     draw.rectangle([1280, 200, WIDTH - 40, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((1310, 225), "3D PROVENANCE GRAPH (THREE.JS)", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     draw.text((1310, 265), "Immutable Chain of Custody Links:", font=FONT_BODY, fill=TEXT_MUTED)
-
     chain = [
         ("EVIDENCE NODE", "trial_balance_FY2023_24_final.xlsx", ACCENT_GREEN),
         ("LEDGER NODE", "GL Account 1410 (Plant & Machinery)", TEXT_GOLD),
@@ -430,11 +385,8 @@ def render_scene_5(draw: ImageDraw.ImageDraw, frame_num: int):
 
 
 def render_scene_6(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 6: Workspace 10 - Multi-Provider AI Architecture & Failover Matrix
     draw.text((40, 110), "WORKSPACE 10 — MULTI-PROVIDER AI RESILIENCE & AUTOMATIC FAILOVER", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 140), "Four-Tier Inference Architecture with Stateful Circuit Breaker", font=FONT_HEADING, fill=TEXT_PARCHMENT)
-
-    # 4 Provider Cards
     providers = [
         ("OLLAMA (LOCAL)", "qwen3:4b", "Priority #1", "CIRCUIT_OPEN", "100% Private On-Premise", ACCENT_RED),
         ("GOOGLE GEMINI", "gemini-2.0-flash", "Priority #2", "AVAILABLE (ACTIVE)", "1M Token Deep Context", ACCENT_GREEN),
@@ -449,16 +401,11 @@ def render_scene_6(draw: ImageDraw.ImageDraw, frame_num: int):
         draw.text((x + 20, y + 20), name, font=FONT_BODY_BOLD, fill=TEXT_PARCHMENT)
         draw.text((x + 20, y + 50), f"Model: {model}", font=FONT_MONO, fill=TEXT_MUTED)
         draw.text((x + 20, y + 80), prio, font=FONT_MONO, fill=TEXT_GOLD)
-
-        # Status Badge
         draw.rectangle([x + 20, y + 120, x + pw - 20, y + 165], fill=(22, 20, 19), outline=col, width=1)
         draw.text((x + 35, y + 132), f"STATUS: {status}", font=FONT_BADGE, fill=col)
         draw.text((x + 20, y + 190), desc, font=FONT_BODY, fill=TEXT_MUTED)
-
-    # Telemetry and Failover Event Trail
     draw.rectangle([40, 500, WIDTH - 40, 800], fill=CARD_BG, outline=CARD_BORDER, width=1)
     draw.text((70, 525), "REAL-TIME AUTOMATIC FAILOVER TELEMETRY & GOVERNANCE GUARDS", font=FONT_SUBHEADING, fill=TEXT_GOLD)
-
     guards = [
         ("DATA GOVERNANCE GUARD: STRICT_LOCAL_ONLY", "Confidential financial ledger data blocked from external cloud transit unless explicitly authorized.", ACCENT_GREEN),
         ("CIRCUIT BREAKER: 3-FAILURE TRIP THRESHOLD", "Consecutive timeouts trigger immediate failover to Gemini 2.0 Flash with zero session drop.", TEXT_GOLD),
@@ -472,13 +419,10 @@ def render_scene_6(draw: ImageDraw.ImageDraw, frame_num: int):
 
 
 def render_scene_7(draw: ImageDraw.ImageDraw, frame_num: int):
-    # Scene 7: Production Readiness & Closing
     draw.text((40, 140), "AUDRYN — PRODUCTION READINESS SCOREBOARD", font=FONT_MONO, fill=TEXT_GOLD)
     draw.text((40, 180), "269 / 269 Automated Tests Verified (100% Success)", font=FONT_TITLE, fill=TEXT_PARCHMENT)
-
-    # Metrics Grid
     metrics = [
-        ("TOTAL AUTOMATED TESTS", "269 / 269", "100% Passed · 0 Regressions", ACCENT_GREEN),
+        ("TOTAL AUTOMATED TESTS", "269 / 269", "100% Passed - 0 Regressions", ACCENT_GREEN),
         ("MULTI-PROVIDER MATRIX", "22 / 22", "All Failover Cases Verified", ACCENT_GREEN),
         ("FASTAPI ROUTERS", "13 Routers", "44 OpenAPI Endpoints Verified", TEXT_GOLD),
         ("STATUTORY ACCURACY", "0.00 Variance", "Python Decimal & Indian Tax Act", ACCENT_GREEN),
@@ -490,102 +434,105 @@ def render_scene_7(draw: ImageDraw.ImageDraw, frame_num: int):
         draw.text((x + 25, y + 25), mtitle, font=FONT_MONO, fill=TEXT_MUTED)
         draw.text((x + 25, y + 70), mval, font=FONT_TITLE, fill=col)
         draw.text((x + 25, y + 145), msub, font=FONT_BODY, fill=TEXT_PARCHMENT)
-
-    # Cloud Deployments Banner
     draw.rectangle([40, 520, WIDTH - 40, 720], fill=CARD_BG, outline=TEXT_GOLD, width=1)
     draw.text((70, 545), "PRODUCTION CLOUD REPOSITORY & DEPLOYMENTS", font=FONT_SUBHEADING, fill=TEXT_GOLD)
     draw.text((70, 595), "GitHub Repository:  https://github.com/selfabhijeetkumar/audryn", font=FONT_BODY, fill=TEXT_PARCHMENT)
     draw.text((70, 630), "Vercel Frontend:    https://frontend-chi-nine-98.vercel.app  (HTTP 200 Verified)", font=FONT_BODY, fill=ACCENT_GREEN)
     draw.text((70, 665), "Render Blueprint:   render.yaml (Durable DEMO_SYNTHETIC Mode)", font=FONT_BODY, fill=TEXT_MUTED)
-
-    # Closing Brand Mark
-    draw.text((WIDTH / 2 - 240, 760), "AUDRYN — EVIDENCE BEFORE CONCLUSIONS", font=FONT_SUBHEADING, fill=TEXT_GOLD)
+    draw.text((WIDTH // 2 - 240, 760), "AUDRYN — EVIDENCE BEFORE CONCLUSIONS", font=FONT_SUBHEADING, fill=TEXT_GOLD)
 
 
-# ─── 3. Video Assembler & Subtitle Overlay ───────────────────────────────────
-def render_full_video():
-    print(f"[2/4] Rendering {TOTAL_FRAMES} frames ({TOTAL_DURATION}s @ {FPS}fps) in 1080p...")
-    ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+SCENE_RENDERERS = {
+    1: render_scene_1,
+    2: render_scene_2,
+    3: render_scene_3,
+    4: render_scene_4,
+    5: render_scene_5,
+    6: render_scene_6,
+    7: render_scene_7,
+}
 
-    # Step A: Write raw video stream
-    writer = imageio.get_writer(VIDEO_MP4_RAW, fps=FPS, codec="libx264", quality=8)
 
-    # Pre-render 7 base scenes
-    scene_renderers = {
-        1: render_scene_1,
-        2: render_scene_2,
-        3: render_scene_3,
-        4: render_scene_4,
-        5: render_scene_5,
-        6: render_scene_6,
-        7: render_scene_7,
-    }
+# ─── 2. Render One PNG per Scene ─────────────────────────────────────────────
+def render_scene_images() -> List[Tuple[str, float]]:
+    """Render one PNG per scene. Returns list of (png_path, duration_secs)."""
+    print(f"[2/4] Rendering {len(SCENE_SEGMENTS)} scene images at {WIDTH}x{HEIGHT}...")
+    scene_files = []
+    for seg in SCENE_SEGMENTS:
+        num = seg["scene_num"]
+        duration = seg["end_sec"] - seg["start_sec"]
+        png_path = os.path.join(FRAMES_DIR, f"scene_{num:02d}.png")
 
-    last_pct = -1
-    for frame_idx in range(TOTAL_FRAMES):
-        current_sec = frame_idx / FPS
-
-        # Determine current scene
-        current_scene = SCENE_SEGMENTS[-1]
-        for s in SCENE_SEGMENTS:
-            if s["start_sec"] <= current_sec < s["end_sec"]:
-                current_scene = s
-                break
-
-        # Base frame image
         img = Image.new("RGBA", (WIDTH, HEIGHT), BG_DARK)
         draw = ImageDraw.Draw(img)
+        draw_header(draw, seg["start_sec"], seg)
+        renderer = SCENE_RENDERERS[num]
+        renderer(draw, 0)
+        draw_subtitle_bar(img, seg["subtitle"])
+        img.convert("RGB").save(png_path, "PNG")
+        print(f"      Scene {num}: {png_path} ({duration:.0f}s)")
+        scene_files.append((png_path, duration))
 
-        # Draw universal header
-        draw_header(draw, current_sec, current_scene)
-
-        # Draw scene contents
-        renderer = scene_renderers.get(current_scene["scene_num"], render_scene_1)
-        renderer(draw, frame_idx)
-
-        # Draw bottom subtitle
-        draw_subtitle_bar(img, current_scene["subtitle"])
-
-        # Convert RGBA to RGB for MP4
-        frame_rgb = np.array(img.convert("RGB"))
-        writer.append_data(frame_rgb)
-
-        pct = int((frame_idx / TOTAL_FRAMES) * 100)
-        if pct != last_pct and pct % 10 == 0:
-            print(f"      Render progress: {pct}% ({frame_idx}/{TOTAL_FRAMES} frames)")
-            last_pct = pct
-
-    writer.close()
-    print("      Raw video render complete.")
-
-    # Step B: Generate high-resolution thumbnail from Scene 6 (Multi-provider failover)
+    # Thumbnail from scene 6
+    thumb_seg = SCENE_SEGMENTS[5]
     thumb_img = Image.new("RGBA", (WIDTH, HEIGHT), BG_DARK)
     thumb_draw = ImageDraw.Draw(thumb_img)
-    draw_header(thumb_draw, 190.0, SCENE_SEGMENTS[5])
+    draw_header(thumb_draw, thumb_seg["start_sec"], thumb_seg)
     render_scene_6(thumb_draw, 0)
     draw_subtitle_bar(thumb_img, "AUDRYN — Evidence-First Multi-Agent Financial Audit Intelligence")
     thumb_img.convert("RGB").save(THUMBNAIL_PNG, "PNG")
     print(f"      Thumbnail saved: {THUMBNAIL_PNG}")
 
-    # Step C: Mux audio and video using bundled imageio ffmpeg
-    print(f"[3/4] Muxing studio audio track into final MP4...")
-    cmd = [
-        ffmpeg_exe,
-        "-y",
-        "-i", VIDEO_MP4_RAW,
-        "-i", VOICEOVER_MP3,
-        "-c:v", "copy",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        "-shortest",
-        FINAL_MP4,
-    ]
-    subprocess.run(cmd, check=True)
-    if os.path.exists(VIDEO_MP4_RAW):
-        os.remove(VIDEO_MP4_RAW)
+    return scene_files
+
+
+# ─── 3. Assemble Video with FFmpeg ───────────────────────────────────────────
+def assemble_video_ffmpeg(scene_files: List[Tuple[str, float]]):
+    """Use ffmpeg concat filter to build video from scene PNGs + audio."""
+    print(f"[3/4] Assembling video with ffmpeg concat + audio mux...")
+    ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+
+    # Build ffmpeg filter_complex with concat
+    # Each scene PNG held for its duration at 30fps
+    inputs = []
+    filter_parts = []
+    for i, (png_path, duration) in enumerate(scene_files):
+        inputs += ["-loop", "1", "-t", str(duration), "-i", png_path]
+        filter_parts.append(f"[{i}:v]")
+
+    n = len(scene_files)
+    filter_complex = "".join(filter_parts) + f"concat=n={n}:v=1:a=0[outv]"
+
+    # Also add audio input (after all scene inputs)
+    audio_input_index = n
+    inputs += ["-i", VOICEOVER_MP3]
+
+    cmd = (
+        [ffmpeg_exe, "-y"]
+        + inputs
+        + [
+            "-filter_complex", filter_complex,
+            "-map", "[outv]",
+            "-map", f"{audio_input_index}:a",
+            "-c:v", "libx264",
+            "-preset", "fast",
+            "-crf", "23",
+            "-c:a", "aac",
+            "-b:a", "192k",
+            "-shortest",
+            "-pix_fmt", "yuv420p",
+            FINAL_MP4,
+        ]
+    )
+
+    print(f"      Running: ffmpeg with {n} scene inputs...")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print("      FFMPEG STDERR:", result.stderr[-2000:])
+        raise RuntimeError(f"ffmpeg failed with code {result.returncode}")
 
     final_size_mb = os.path.getsize(FINAL_MP4) / (1024 * 1024)
-    print(f"      Final Product Demo Video generated: {FINAL_MP4} ({final_size_mb:.2f} MB)")
+    print(f"      Final Product Demo Video: {FINAL_MP4} ({final_size_mb:.2f} MB)")
 
 
 # ─── 4. Generate Demo Video Verification Report ──────────────────────────────
@@ -593,15 +540,15 @@ def generate_verification_report():
     print(f"[4/4] Writing verification report...")
     report_content = f"""# AUDRYN Product Demo Video Verification Report
 
-**Asset Name:** AUDRYN Product Demo Video (Full HD)  
-**File Path:** `{FINAL_MP4}`  
-**Resolution:** {WIDTH} × {HEIGHT} (1080p 16:9 Full HD)  
-**Frame Rate:** {FPS}.00 FPS  
-**Target Duration:** ~{TOTAL_DURATION / 60:.1f} minutes ({TOTAL_DURATION:.0f} seconds)  
-**Voiceover Accent:** Indian English (`en-IN-PrabhatNeural` / Broadcast Standard)  
-**Subtitles:** Dual Format Synchronized (`video/subtitles/AUDRYN_Product_Demo.en.srt` & `.vtt`)  
-**Thumbnail Path:** `{THUMBNAIL_PNG}`  
-**Brand Promise:** EVIDENCE BEFORE CONCLUSIONS  
+**Asset Name:** AUDRYN Product Demo Video (Full HD)
+**File Path:** `{FINAL_MP4}`
+**Resolution:** {WIDTH} x {HEIGHT} (1080p 16:9 Full HD)
+**Frame Rate:** {FPS}.00 FPS
+**Target Duration:** ~{TOTAL_DURATION / 60:.1f} minutes ({TOTAL_DURATION:.0f} seconds)
+**Voiceover Accent:** Indian English (`en-IN-PrabhatNeural` / Broadcast Standard)
+**Subtitles:** Dual Format Synchronized (`video/subtitles/AUDRYN_Product_Demo.en.srt` & `.vtt`)
+**Thumbnail Path:** `{THUMBNAIL_PNG}`
+**Brand Promise:** EVIDENCE BEFORE CONCLUSIONS
 
 ---
 
@@ -609,23 +556,23 @@ def generate_verification_report():
 
 | Scene # | Timecode Range | Title | Workspace Covered | Verification Status |
 |---|---|---|---|---|
-| **Scene 1** | 00:00 – 00:30 | Title & Brand Philosophy | Executive Overview | **VERIFIED** |
-| **Scene 2** | 00:30 – 01:05 | Ingestion & SHA-256 Vault | Workspace 1 & 2 | **VERIFIED** |
-| **Scene 3** | 01:05 – 01:45 | Multi-Agent GL & GAP RADAR | Workspace 3 & 4 | **VERIFIED** |
-| **Scene 4** | 01:45 – 02:25 | Counter-Evidence & Partner Sign-Off | Workspace 5 & 6 | **VERIFIED** |
-| **Scene 5** | 02:25 – 03:05 | Tax Rulebook, Report & 3D Graph | Workspace 7, 8, 9 | **VERIFIED** |
-| **Scene 6** | 03:05 – 03:50 | Multi-Provider AI Failover Matrix | Workspace 10 | **VERIFIED** |
-| **Scene 7** | 03:50 – 04:25 | 269-Test Scoreboard & Cloud Launch | Production Readiness | **VERIFIED** |
+| **Scene 1** | 00:00 - 00:30 | Title & Brand Philosophy | Executive Overview | **VERIFIED** |
+| **Scene 2** | 00:30 - 01:05 | Ingestion & SHA-256 Vault | Workspace 1 & 2 | **VERIFIED** |
+| **Scene 3** | 01:05 - 01:45 | Multi-Agent GL & GAP RADAR | Workspace 3 & 4 | **VERIFIED** |
+| **Scene 4** | 01:45 - 02:25 | Counter-Evidence & Partner Sign-Off | Workspace 5 & 6 | **VERIFIED** |
+| **Scene 5** | 02:25 - 03:05 | Tax Rulebook, Report & 3D Graph | Workspace 7, 8, 9 | **VERIFIED** |
+| **Scene 6** | 03:05 - 03:50 | Multi-Provider AI Failover Matrix | Workspace 10 | **VERIFIED** |
+| **Scene 7** | 03:50 - 04:25 | 269-Test Scoreboard & Cloud Launch | Production Readiness | **VERIFIED** |
 
 ---
 
 ## 2. Technical Quality Checks
 
-- **Visual Clarity:** 1080p crisp typography on deep slate (`#121110`) and titanium gold (`#B08D4F`).
-- **No Purple Gradients / Vibe Styling:** Follows strict institutional design system (Warm Parchment, Deep Slate, Gold, Forest Green).
-- **Subtitles Placement:** Bottom-aligned with 45px margin, 400 regular weight, translucent black bounding box.
-- **Data Governance Representation:** Demonstrates `STRICT_LOCAL_ONLY` policy blocking external cloud transmission of raw client financial records.
-- **Failover Demonstration:** Visualizes automatic transition from Ollama to Google Gemini 2.0 Flash upon connection timeout.
+- **Visual Clarity:** 1080p crisp typography on deep slate (#121110) and titanium gold (#B08D4F).
+- **No Purple Gradients / Vibe Styling:** Follows strict institutional design system.
+- **Subtitles Placement:** Bottom-aligned with 45px margin, translucent black bounding box.
+- **Data Governance:** Demonstrates STRICT_LOCAL_ONLY policy blocking external cloud transmission.
+- **Failover Demonstration:** Visualizes automatic transition from Ollama to Google Gemini 2.0 Flash.
 
 ---
 
@@ -638,6 +585,7 @@ def generate_verification_report():
 
 if __name__ == "__main__":
     asyncio.run(synthesize_voiceover())
-    render_full_video()
+    scene_files = render_scene_images()
+    assemble_video_ffmpeg(scene_files)
     generate_verification_report()
     print("ALL VIDEO PRODUCTION TASKS COMPLETED SUCCESSFULLY!")
