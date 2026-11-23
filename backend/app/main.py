@@ -43,8 +43,15 @@ from backend.db.repositories import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup and shutdown hooks."""
-    # Ensure migrations are applied
+    # Ensure directories exist
     db_path = os.environ.get("AUDRYN_DB_PATH", DEFAULT_DB_PATH)
+    db_dir = os.path.dirname(db_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+    vault_path = os.environ.get("AUDRYN_VAULT_PATH", os.path.join("data", "evidence_vault"))
+    os.makedirs(vault_path, exist_ok=True)
+
+    # Ensure migrations are applied
     run_migrations(db_path)
 
     # Bootstrap default Partner user if not exists (environment-controlled)

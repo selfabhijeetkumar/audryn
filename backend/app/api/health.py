@@ -14,7 +14,7 @@ from backend.providers.config import ProviderConfig
 router = APIRouter(prefix="/health", tags=["Health"])
 
 
-@router.get("")
+@router.api_route("", methods=["GET", "HEAD"])
 def get_health():
     # Database check
     db_ok = False
@@ -29,7 +29,11 @@ def get_health():
         db_ok = False
 
     # Vault check
-    vault_path = os.path.join("data", "evidence_vault")
+    vault_path = os.environ.get("AUDRYN_VAULT_PATH", os.path.join("data", "evidence_vault"))
+    try:
+        os.makedirs(vault_path, exist_ok=True)
+    except Exception:
+        pass
     vault_ok = os.path.exists(vault_path) and os.access(vault_path, os.W_OK)
 
     # Local Ollama check (timeout 0.5s to avoid blocking)
