@@ -4,7 +4,10 @@
 > **Promise:** EVIDENCE BEFORE CONCLUSIONS  
 > **Pronunciation:** AW-drin  
 > **Automated Verification:** 269 / 269 Tests Passing (100% Success)  
-> **Live Deployment:** [https://frontend-chi-nine-98.vercel.app](https://frontend-chi-nine-98.vercel.app)  
+> **Live Frontend (Vercel):** [https://frontend-chi-nine-98.vercel.app/app](https://frontend-chi-nine-98.vercel.app/app)  
+> **Live Backend API (Render):** [https://audryn-api.onrender.com](https://audryn-api.onrender.com)  
+> **Live API Health Check:** [https://audryn-api.onrender.com/api/v1/health](https://audryn-api.onrender.com/api/v1/health)  
+> **Live Swagger API Docs:** [https://audryn-api.onrender.com/docs](https://audryn-api.onrender.com/docs)  
 
 ---
 
