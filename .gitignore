@@ -41,3 +41,8 @@ data/evidence/
 data/evidence_vault/
 data/reports/*.pdf
 data/reports/*.xlsx
+
+# Video Temp Files
+video/output/temp_*
+video/audio/test_*
+
